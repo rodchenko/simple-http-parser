@@ -4,5 +4,10 @@
 
 <body>
   <h1>Welcome to Rodchenko!</h1>
-
+  {{>hello}}
 </body>
+
+<template name="hello">
+  <button>Click Me</button>
+  {{text}}
+</template>
