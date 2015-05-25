@@ -1,23 +1,23 @@
-// if (Meteor.isClient) {
-//   // counter starts at 0
-//   Session.setDefault('counter', 0);
+if (Meteor.isClient) {
+  Template.hello.helpers({
+    collection: function () {
+      return Texts.find();
+    }
+  });
+}
 
-//   Template.hello.helpers({
-//     counter: function () {
-//       return Session.get('counter');
-//     }
-//   });
-
-//   Template.hello.events({
-//     'click button': function () {
-//       // increment the counter when button is clicked
-//       Session.set('counter', Session.get('counter') + 10);
-//     }
-//   });
-// }
+Texts = new Mongo.Collection('texts');
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
+
+    // faker.locale = "ru";
+
+    var name = faker.name.firstName();
+    var surname = faker.name.lastName();
+
+    var image = faker.image.avatar();
+    console.log(image);
 
     HTTP.call(
       "POST",
@@ -25,8 +25,8 @@ if (Meteor.isServer) {
       {
         params: {
           'f1_gender': 'male',
-          'f1_firstname': 'plus',
-          'f1_surname': 'minus',
+          'f1_firstname': name,
+          'f1_surname': surname,
           'f1_birthyear': '2007',
           'f1_birthCity': '',
           'f1_country': '2',
@@ -41,8 +41,10 @@ if (Meteor.isServer) {
       function (error, result) {
         if(!error) {
           // console.log(result.content);
-          var $ = cheerio.load(result.content);
-          console.log($('.text_container > .formdiv').text());
+          var html = cheerio.load(result.content);
+          var text = html('.text_container .formdiv').text();
+          // console.log(text);
+          Texts.insert({"image": image, "text": text, "name": name, "surname": surname, "time": new Date()});
         }
       }
     );

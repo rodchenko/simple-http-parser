@@ -4,5 +4,16 @@
 
 <body>
   <h1>Welcome to Rodchenko!</h1>
-
+  {{>hello}}
 </body>
+
+<template name="hello">
+  {{#each collection}}
+    <p>
+      <img src="{{image}}"/>
+      time: {{time}} 
+      <br>
+      {{text}}
+    </p>
+  {{/each}}
+</template>
