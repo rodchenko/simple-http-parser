@@ -8,7 +8,7 @@ if (Meteor.isClient) {
     },
     obj: function () {
       // return Session.get('text');  
-      return Texts.find();
+      return Texts.find({},{sort: {time: -1}, limit: 5});
     },
   });
 
@@ -50,13 +50,17 @@ if (Meteor.isServer) {
        //console.log('name', name);
         var name = faker.name.firstName();
         var surname = faker.name.lastName();
+        var avatarIm = faker.image.avatar();
+        var avatarInt = faker.internet.avatar();
         console.log('name', name);
+        console.log('surname', surname);
         var result = HTTP.call(
           "POST",
           "http://www.500letters.org/form_15.php",
           {
             params: {
               'f1_gender': random_gender(),
+              'f1_country': random_country(),
               'f1_firstname': name,
               'f1_surname': surname,
               'f1_birthyear': 1980+Math.floor(Math.random()*10),
@@ -78,7 +82,16 @@ if (Meteor.isServer) {
           var $ = cheerio.load(result.content);
           // console.log($('.text_container > .formdiv').text());
           var text = $('.text_container > .formdiv').text();
-          Texts.insert({"text": text, "name": name, "surname": surname, "time": new Date()});
+          Texts.insert({
+            "text": text, 
+            "name": name, 
+            "surname": surname, 
+            "avatar": {
+              "im": avatarIm, 
+              "int": avatarInt
+            },
+            "time": new Date()
+          });
           return;
         }
       // }
@@ -88,7 +101,13 @@ if (Meteor.isServer) {
   
   function random_gender() {
     var array = ["male", "female"];
-    console.log('maingender', array[Math.floor(Math.random()*array.length)]);
+    console.log('gender', array[Math.floor(Math.random()*array.length)]);
+    return array[Math.floor(Math.random()*array.length)];
+  }
+
+  function random_country() {
+    var array = ["Afghanistan", "Albania", "Algeria", "American Samoa", "Andorra", "Angola"];
+    console.log('country', array[Math.floor(Math.random()*array.length)]);
     return array[Math.floor(Math.random()*array.length)];
   }
 
@@ -108,7 +127,7 @@ if (Meteor.isServer) {
     var themes = ["Abstraction","Aesthetics", "Alienation", "Appropriation", "Archive", "Chance", "Concept"];
     // return [themes[];
     var array = getRandomArrayElements(themes, Math.floor(Math.random()*themes.length-1)+1 );
-    console.log('array', array);
+    console.log('theme', array);
     return array;
   }
 
