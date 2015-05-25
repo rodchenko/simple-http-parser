@@ -1,6 +1,6 @@
 if (Meteor.isClient) {
   // counter starts at 0
-  Session.setDefault('text', '');
+  Session.setDefault('loading', 0);
 
   Template.hello.helpers({
     counter: function () {
@@ -10,18 +10,22 @@ if (Meteor.isClient) {
       // return Session.get('text');  
       return Texts.find({},{sort: {time: -1}, limit: 5});
     },
+    loading: function() {
+      return Session.get('loading');
+    }
   });
 
   Template.hello.events({
     'click button': function () {
       // var name = $('#artist_name').val();
       // if(name != '') {
+        Session.set('loading', 1);
         Meteor.call(
           'parse', name,
           function(error, result) {
             // console.log(result);
             if(result != "error") {
-              Session.set('text', result);
+              Session.set('loading', 0);
             }
           }
         );

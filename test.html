@@ -8,13 +8,15 @@
 </body>
 
 <template name="hello">
-  <input type="text" id="artist_name" placeholder="your name">
-  <button>Click Me</button>
-  {{#each obj}}
-  <p>
-  	time: {{time}} result: {{text}}
-  	<img src="{{avatar.im}}"/>
-  	<img src="{{avatar.int}}"/>
-  </p>
-  {{/each}}
+	{{#if loading}}
+  		generating new user...
+  	{{else}}
+  		<button>Generate a new artist</button>
+  	{{/if}}
+  	{{#each obj}}
+	  	<p>
+	  		<img src="{{avatar.int}}"/>
+	  		time: {{time}} result: {{text}}
+	  	</p>
+  	{{/each}}
 </template>
