@@ -10,5 +10,9 @@
 <template name="hello">
   <input type="text" id="artist_name" placeholder="your name">
   <button>Click Me</button>
-  {{text}}
+  {{#each obj}}
+  <p>
+  	time: {{time}} result: {{text}}
+  </p>
+  {{/each}}
 </template>

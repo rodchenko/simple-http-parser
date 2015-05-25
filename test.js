@@ -6,15 +6,16 @@ if (Meteor.isClient) {
     counter: function () {
       return Session.get('counter');
     },
-    text: function () {
-      return Session.get('text');
-    }
+    obj: function () {
+      // return Session.get('text');  
+      return Texts.find();
+    },
   });
 
   Template.hello.events({
     'click button': function () {
-      var name = $('#artist_name').val();
-      if(name != '') {
+      // var name = $('#artist_name').val();
+      // if(name != '') {
         Meteor.call(
           'parse', name,
           function(error, result) {
@@ -25,26 +26,31 @@ if (Meteor.isClient) {
           }
         );
         
-      } else {
-        Session.set('text', "please enter a name");
-      }
+      // } else {
+      //   Session.set('text', "please enter a name");
+      // }
     }
   });
 }
+
+Texts = new Mongo.Collection('texts');
 
 if (Meteor.isServer) {
   //Meteor.startup(function () {
   Meteor.methods({
     parse: function(fullname) {
+       console.log("ok");
+      // if(fullname!='') {
+      //   var f = fullname.split(' ');
+      //   var name = f[0];
+      //   var surname = f[1];
+      //   if(typeof surname == 'undefined') 
+      //     surname = "test";
 
-      if(fullname!='') {
-        var f = fullname.split(' ');
-        var name = f[0];
-        var surname = f[1];
-        if(typeof surname == 'undefined') 
-          surname = "test";
-
-        // console.log('name', name);
+       //console.log('name', name);
+        var name = faker.name.firstName();
+        var surname = faker.name.lastName();
+        console.log('name', name);
         var result = HTTP.call(
           "POST",
           "http://www.500letters.org/form_15.php",
@@ -71,9 +77,11 @@ if (Meteor.isServer) {
           // console.log(result.content);
           var $ = cheerio.load(result.content);
           // console.log($('.text_container > .formdiv').text());
-          return $('.text_container > .formdiv').text();
+          var text = $('.text_container > .formdiv').text();
+          Texts.insert({"text": text, "name": name, "surname": surname, "time": new Date()});
+          return;
         }
-      }
+      // }
       return "error";
     }
   });
