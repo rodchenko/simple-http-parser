@@ -3,8 +3,8 @@ var everyMinute = new Cron(function() {
     console.log("another minute has passed!");
     generate();
 }, {
-    minute: 1,
-    hour: 20,
+    // minute: 1,
+    // hour: 20,
 });
 
 function generate(fullname) {
@@ -40,7 +40,7 @@ function generate(fullname) {
     // console.log(result.content);
     var $ = cheerio.load(result.content);
     // console.log($('.text_container > .formdiv').text());
-    var text = $('.text_container > .formdiv').text();
+    var text = $('.text_container > .formdiv').html();
     Texts.insert({
       "text": text, 
       "name": name, 
