@@ -1,54 +1,59 @@
 
-
-Meteor.methods({
-  generate: function(fullname) {
-    console.log("ok");
-    var name = faker.name.firstName();
-    var surname = faker.name.lastName();
-    var avatarInt = faker.internet.avatar();
-    var params = {
-      'f1_gender': random_gender(),
-      'f1_country': random_country(),
-      'f1_firstname': name,
-      'f1_surname': surname,
-      'f1_birthyear': 1980+Math.floor(Math.random()*10),
-      'f1_birthCity': '',
-      'f1_workplaceCity': '',
-      'f3_mainMedia': random_media(),
-      'f3_otherMedia': random_othermedia(),
-      'f4_theme': random_theme(),
-      'generate_bio': 'Generate artist text',
-    };
-    console.log('params', params);
-    var result = HTTP.call(
-      "POST",
-      "http://www.500letters.org/form_15.php",
-      {
-        params: params,
-        headers: {
-          'Content-type': 'application/x-www-form-urlencoded'
-        } 
-      }
-    ); 
-    if(result) {
-      // console.log(result.content);
-      var $ = cheerio.load(result.content);
-      // console.log($('.text_container > .formdiv').text());
-      var text = $('.text_container > .formdiv').text();
-      Texts.insert({
-        "text": text, 
-        "name": name, 
-        "surname": surname, 
-        "avatar": { 
-          "int": avatarInt
-       },
-        "time": new Date()
-      });
-      return;
-    }
-    return "error";
-  }
+var everyMinute = new Cron(function() {
+    console.log("another minute has passed!");
+    generate();
+}, {
+    minute: 1,
+    hour: 20,
 });
+
+function generate(fullname) {
+  console.log("ok");
+  var name = faker.name.firstName();
+  var surname = faker.name.lastName();
+  var avatarInt = faker.internet.avatar();
+  var params = {
+    'f1_gender': random_gender(),
+    'f1_country': random_country(),
+    'f1_firstname': name,
+    'f1_surname': surname,
+    'f1_birthyear': 1980+Math.floor(Math.random()*10),
+    'f1_birthCity': '',
+    'f1_workplaceCity': '',
+    'f3_mainMedia': random_media(),
+    'f3_otherMedia': random_othermedia(),
+    'f4_theme': random_theme(),
+    'generate_bio': 'Generate artist text',
+  };
+  console.log('params', params);
+  var result = HTTP.call(
+    "POST",
+    "http://www.500letters.org/form_15.php",
+    {
+      params: params,
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      } 
+    }
+  ); 
+  if(result) {
+    // console.log(result.content);
+    var $ = cheerio.load(result.content);
+    // console.log($('.text_container > .formdiv').text());
+    var text = $('.text_container > .formdiv').text();
+    Texts.insert({
+      "text": text, 
+      "name": name, 
+      "surname": surname, 
+      "avatar": { 
+        "int": avatarInt
+     },
+      "time": new Date()
+    });
+    return;
+  }
+  return "error";
+};
 
 
 function random_gender() {
