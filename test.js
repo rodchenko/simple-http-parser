@@ -14,7 +14,7 @@ if (Meteor.isClient) {
       return Session.get('loading');
     }
   });
-
+ 
   Template.hello.events({
     'click button': function () {
       // var name = $('#artist_name').val();
@@ -54,30 +54,29 @@ if (Meteor.isServer) {
        //console.log('name', name);
         var name = faker.name.firstName();
         var surname = faker.name.lastName();
-        var avatarint = faker.internet.avatar();
-        console.log('name', name);
-        console.log('surname', surname);
+        var avatarInt = faker.internet.avatar();
+        var params = {
+          'f1_gender': random_gender(),
+          'f1_country': random_country(),
+          'f1_firstname': name,
+          'f1_surname': surname,
+          'f1_birthyear': 1980+Math.floor(Math.random()*10),
+          'f1_birthCity': '',
+          'f1_workplaceCity': '',
+          'f3_mainMedia': random_media(),
+          'f3_otherMedia': random_othermedia(),
+          'f4_theme': random_theme(),
+          'generate_bio': 'Generate artist text',
+        };
+        console.log('params', params);
         var result = HTTP.call(
           "POST",
           "http://www.500letters.org/form_15.php",
           {
-            params: {
-              'f1_gender': random_gender(),
-              'f1_country': random_country(),
-              'f1_firstname': name,
-              'f1_surname': surname,
-              'f1_birthyear': 1980+Math.floor(Math.random()*10),
-              'f1_birthCity': '',
-              'f1_country': '2',
-              'f1_workplaceCity': '',
-              'f3_mainMedia': random_media(),
-              'f3_otherMedia': random_othermedia(),
-              'f4_theme': random_theme(),
-              'generate_bio': 'Generate artist text',
-            },
+            params: params,
             headers: {
               'Content-type': 'application/x-www-form-urlencoded'
-            }
+            } 
           }
         ); 
         if(result) {
@@ -90,7 +89,7 @@ if (Meteor.isServer) {
             "name": name, 
             "surname": surname, 
             "avatar": {
-              "im": avatarIm, 
+              // "im": avatarIm, 
               "int": avatarInt
            },
             "time": new Date()
@@ -354,8 +353,10 @@ if (Meteor.isServer) {
       "Zimbabwe"
     ];
 
-    console.log('country', array[Math.floor(Math.random()*array.length)]);
-    return array[Math.floor(Math.random()*array.length)];
+    var i = Math.floor(Math.random()*242)+2;
+
+    console.log('country', array[i], i.toString());
+    return i.toString();
   }
 
   function random_media() {
